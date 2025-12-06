@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Catálogo de Productos - TechCorp</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif; background: #f5f7fa; color: #2c3e50; }
+        .navbar { background: #2c3e50; padding: 1rem 2rem; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .navbar-content { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; }
+        .logo { font-size: 1.5rem; font-weight: bold; color: #3498db; text-decoration: none; }
+        .nav-links { display: flex; gap: 2rem; list-style: none; }
+        .nav-links a { color: #ecf0f1; text-decoration: none; transition: color 0.3s; }
+        .nav-links a:hover { color: #3498db; }
+        .container { max-width: 1200px; margin: 2rem auto; padding: 0 2rem; }
+        .page-header h1 { font-size: 2rem; color: #2c3e50; margin-bottom: 0.5rem; }
+        .page-header p { color: #7f8c8d; margin-bottom: 2rem; }
+        .search-card { background: white; border-radius: 8px; padding: 2rem; box-shadow: 0 2px 8px rgba(0,0,0,0.1); margin-bottom: 2rem; }
+        .form-group { margin-bottom: 1.5rem; }
+        label { display: block; color: #2c3e50; font-weight: 600; margin-bottom: 0.5rem; }
+        input[type="text"], select { width: 100%; padding: 0.9rem; border: 2px solid #e0e0e0; border-radius: 6px; font-size: 1rem; }
+        input[type="text"]:focus, select:focus { outline: none; border-color: #667eea; }
+        .btn-search { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 0.9rem 2rem; border: none; border-radius: 6px; font-size: 1rem; font-weight: 600; cursor: pointer; }
+        .btn-search:hover { transform: translateY(-2px); }
+        .products-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.5rem; }
+        .product-card { background: white; border-radius: 8px; padding: 1.5rem; box-shadow: 0 2px 8px rgba(0,0,0,0.1); transition: transform 0.3s; }
+        .product-card:hover { transform: translateY(-5px); }
+        .product-icon { font-size: 3rem; text-align: center; margin-bottom: 1rem; }
+        .product-name { font-size: 1.2rem; font-weight: bold; color: #2c3e50; margin-bottom: 0.5rem; }
+        .product-category { color: #7f8c8d; font-size: 0.85rem; text-transform: uppercase; margin-bottom: 1rem; }
+        .product-price { font-size: 1.8rem; font-weight: bold; color: #27ae60; }
+        .debug-panel { background: #263238; color: #aed581; padding: 1.5rem; border-radius: 6px; margin-top: 1.5rem; font-family: 'Courier New', monospace; font-size: 0.85rem; display: none; }
+        .debug-panel.active { display: block; }
+        .alert-error { background: #f8d7da; border: 1px solid #f5c6cb; color: #721c24; padding: 1rem; border-radius: 6px; margin-bottom: 1.5rem; }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-content">
+            <a href="/" class="logo">🏢 TechCorp</a>
+            <ul class="nav-links">
+                <li><a href="/">Inicio</a></li>
+                <li><a href="/login">Acceder</a></li>
+                <li><a href="/productos">Productos</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="page-header">
+            <h1>📦 Catálogo de Productos</h1>
+            <p>Explora nuestros productos y servicios por categoría</p>
+        </div>
+
+        <div class="search-card">
+            <form method="POST" action="/productos">
+                <div class="form-group">
+                    <label for="category">Categoría</label>
+                    <select id="category" name="category" onchange="this.form.querySelector('input[name=category]').value = this.value">
+                        <option value="">Selecciona una categoría</option>
+                        <option value="electronics">Electrónica</option>
+                        <option value="furniture">Muebles</option>
+                        <option value="software">Software</option>
+                        <option value="services">Servicios</option>
+                    </select>
+                    <input type="hidden" name="category" value="">
+                    <small style="color: #7f8c8d; margin-top: 0.5rem; display: block;">
+                        O escribe directamente el nombre de la categoría
+                    </small>
+                    <input type="text" name="category" placeholder="Ej: electronics, furniture..." style="margin-top: 1rem;">
+                </div>
+                <button type="submit" class="btn-search">🔍 Buscar Productos</button>
+            </form>
+        </div>
+
+        {% if result %}
+        <div style="background: white; border-radius: 8px; padding: 2rem; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+            {% if result.error %}
+            <div class="alert-error">
+                <strong>⚠️ Error en la búsqueda:</strong><br>
+                {{ result.error }}
+            </div>
+            {% else %}
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                <h2>Productos Encontrados</h2>
+                <span style="color: #7f8c8d;">{{ result.products|length }} producto(s)</span>
+            </div>
+
+            {% if result.products %}
+            <div class="products-grid">
+                {% for product in result.products %}
+                <div class="product-card">
+                    <div class="product-icon">
+                        {% if product.category == 'electronics' %}💻
+                        {% elif product.category == 'furniture' %}🪑
+                        {% else %}📦{% endif %}
+                    </div>
+                    <div class="product-name">{{ product.name }}</div>
+                    <div class="product-category">{{ product.category }}</div>
+                    <div class="product-price">${{ "%.2f"|format(product.price) }}</div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div style="text-align: center; padding: 3rem; color: #7f8c8d;">
+                <div style="font-size: 3rem; margin-bottom: 1rem;">📦</div>
+                <p>No se encontraron productos en esta categoría</p>
+            </div>
+            {% endif %}
+            {% endif %}
+
+            <div class="debug-panel" id="debugPanel">
+                <strong>🐛 Debug Info:</strong><br><br>
+                <strong>Query SQL:</strong><br>
+                {{ result.query }}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    <script>
+        if (localStorage.getItem('debug_mode') === 'true') {
+            const debugPanel = document.getElementById('debugPanel');
+            if (debugPanel) debugPanel.classList.add('active');
+        }
+    </script>
+</body>
+</html>

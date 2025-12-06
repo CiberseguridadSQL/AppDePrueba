@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Directorio de Empleados - TechCorp</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: #f5f7fa;
+            color: #2c3e50;
+        }
+
+        .navbar {
+            background: #2c3e50;
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .navbar-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #3498db;
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: #ecf0f1;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .nav-links a:hover {
+            color: #3498db;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+
+        .page-header {
+            margin-bottom: 2rem;
+        }
+
+        .page-header h1 {
+            font-size: 2rem;
+            color: #2c3e50;
+            margin-bottom: 0.5rem;
+        }
+
+        .page-header p {
+            color: #7f8c8d;
+        }
+
+        .search-card {
+            background: white;
+            border-radius: 8px;
+            padding: 2rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+
+        .search-tabs {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            border-bottom: 2px solid #e0e0e0;
+        }
+
+        .tab {
+            padding: 0.75rem 1.5rem;
+            background: none;
+            border: none;
+            color: #7f8c8d;
+            font-weight: 600;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s;
+        }
+
+        .tab.active {
+            color: #667eea;
+            border-bottom-color: #667eea;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        label {
+            display: block;
+            color: #2c3e50;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 0.9rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .btn-search {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 0.9rem 2rem;
+            border: none;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .btn-search:hover {
+            transform: translateY(-2px);
+        }
+
+        .results-card {
+            background: white;
+            border-radius: 8px;
+            padding: 2rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .results-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .results-header h2 {
+            color: #2c3e50;
+        }
+
+        .results-count {
+            color: #7f8c8d;
+            font-size: 0.9rem;
+        }
+
+        .employee-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .employee-card {
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 1.5rem;
+            transition: border-color 0.3s;
+        }
+
+        .employee-card:hover {
+            border-color: #667eea;
+        }
+
+        .employee-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .employee-avatar {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        .employee-info {
+            flex: 1;
+        }
+
+        .employee-name {
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
+        .employee-role {
+            color: #7f8c8d;
+            font-size: 0.85rem;
+        }
+
+        .employee-details {
+            padding-top: 1rem;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.4rem 0;
+            font-size: 0.9rem;
+        }
+
+        .detail-label {
+            color: #7f8c8d;
+        }
+
+        .detail-value {
+            color: #2c3e50;
+            font-weight: 500;
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 3rem;
+            color: #7f8c8d;
+        }
+
+        .no-results-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .debug-panel {
+            background: #263238;
+            color: #aed581;
+            padding: 1.5rem;
+            border-radius: 6px;
+            margin-top: 1.5rem;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85rem;
+            display: none;
+        }
+
+        .debug-panel.active {
+            display: block;
+        }
+
+        .alert-error {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+            padding: 1rem;
+            border-radius: 6px;
+            margin-bottom: 1.5rem;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-content">
+            <a href="/" class="logo">🏢 TechCorp</a>
+            <ul class="nav-links">
+                <li><a href="/">Inicio</a></li>
+                <li><a href="/login">Acceder</a></li>
+                <li><a href="/buscar_empleado">Empleados</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="page-header">
+            <h1>📋 Directorio de Empleados</h1>
+            <p>Busca empleados por ID o nombre en el sistema</p>
+        </div>
+
+        <div class="search-card">
+            <div class="search-tabs">
+                <button class="tab active" onclick="switchTab('id')">Buscar por ID</button>
+                <button class="tab" onclick="switchTab('name')">Buscar por Nombre</button>
+            </div>
+
+            <div id="tab-id" class="tab-content active">
+                <form method="POST" action="/buscar_empleado">
+                    <input type="hidden" name="search_type" value="id">
+                    <div class="form-group">
+                        <label for="employee_id">ID del Empleado</label>
+                        <input type="text" id="employee_id" name="query" placeholder="Ej: 1, 2, 3..." required>
+                        <small style="color: #7f8c8d; margin-top: 0.5rem; display: block;">
+                            Ingresa el número de identificación del empleado
+                        </small>
+                    </div>
+                    <button type="submit" class="btn-search">🔍 Buscar</button>
+                </form>
+            </div>
+
+            <div id="tab-name" class="tab-content">
+                <form method="POST" action="/buscar_empleado">
+                    <input type="hidden" name="search_type" value="name">
+                    <div class="form-group">
+                        <label for="employee_name">Nombre del Empleado</label>
+                        <input type="text" id="employee_name" name="query" placeholder="Ej: admin, user1..." required>
+                        <small style="color: #7f8c8d; margin-top: 0.5rem; display: block;">
+                            Ingresa el nombre de usuario o nombre completo
+                        </small>
+                    </div>
+                    <button type="submit" class="btn-search">🔍 Buscar</button>
+                </form>
+            </div>
+        </div>
+
+        {% if result %}
+        <div class="results-card">
+            {% if result.error %}
+            <div class="alert-error">
+                <strong>⚠️ Error en la búsqueda:</strong><br>
+                {{ result.error }}
+            </div>
+            {% else %}
+            <div class="results-header">
+                <h2>Resultados de la Búsqueda</h2>
+                <span class="results-count">{{ result.users|length }} empleado(s) encontrado(s)</span>
+            </div>
+
+            {% if result.users %}
+            <div class="employee-grid">
+                {% for user in result.users %}
+                <div class="employee-card">
+                    <div class="employee-header">
+                        <div class="employee-avatar">{{ user.username[0]|upper }}</div>
+                        <div class="employee-info">
+                            <div class="employee-name">{{ user.username }}</div>
+                            <div class="employee-role">{{ user.role|upper }}</div>
+                        </div>
+                    </div>
+                    <div class="employee-details">
+                        <div class="detail-row">
+                            <span class="detail-label">ID:</span>
+                            <span class="detail-value">#{{ user.id }}</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Email:</span>
+                            <span class="detail-value">{{ user.email }}</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Rol:</span>
+                            <span class="detail-value">{{ user.role }}</span>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="no-results">
+                <div class="no-results-icon">🔍</div>
+                <p>No se encontraron empleados que coincidan con tu búsqueda</p>
+            </div>
+            {% endif %}
+            {% endif %}
+
+            <div class="debug-panel" id="debugPanel">
+                <strong>🐛 Debug Info:</strong><br><br>
+                <strong>Query SQL:</strong><br>
+                {{ result.query }}<br><br>
+                <strong>Tipo de búsqueda:</strong> {{ result.search_type }}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    <script>
+        function switchTab(tabName) {
+            // Actualizar tabs
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            event.target.classList.add('active');
+
+            // Actualizar contenido
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            document.getElementById('tab-' + tabName).classList.add('active');
+        }
+
+        // Mostrar debug panel si está activado
+        if (localStorage.getItem('debug_mode') === 'true') {
+            const debugPanel = document.getElementById('debugPanel');
+            if (debugPanel) {
+                debugPanel.classList.add('active');
+            }
+        }
+    </script>
+</body>
+</html>

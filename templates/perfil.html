@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi Perfil - TechCorp</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif; background: #f5f7fa; color: #2c3e50; }
+        .navbar { background: #2c3e50; padding: 1rem 2rem; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .navbar-content { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; }
+        .logo { font-size: 1.5rem; font-weight: bold; color: #3498db; text-decoration: none; }
+        .nav-links { display: flex; gap: 2rem; list-style: none; }
+        .nav-links a { color: #ecf0f1; text-decoration: none; transition: color 0.3s; }
+        .nav-links a:hover { color: #3498db; }
+        .container { max-width: 900px; margin: 2rem auto; padding: 0 2rem; }
+        .page-header h1 { font-size: 2rem; color: #2c3e50; margin-bottom: 0.5rem; }
+        .page-header p { color: #7f8c8d; margin-bottom: 2rem; }
+        .profile-card { background: white; border-radius: 8px; padding: 2rem; box-shadow: 0 2px 8px rgba(0,0,0,0.1); margin-bottom: 2rem; }
+        .form-group { margin-bottom: 1.5rem; }
+        label { display: block; color: #2c3e50; font-weight: 600; margin-bottom: 0.5rem; }
+        input[type="text"], textarea { width: 100%; padding: 0.9rem; border: 2px solid #e0e0e0; border-radius: 6px; font-size: 1rem; font-family: inherit; }
+        textarea { min-height: 120px; resize: vertical; }
+        input:focus, textarea:focus { outline: none; border-color: #667eea; }
+        .btn-update { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 0.9rem 2rem; border: none; border-radius: 6px; font-size: 1rem; font-weight: 600; cursor: pointer; }
+        .btn-update:hover { transform: translateY(-2px); }
+        .alert { padding: 1rem; border-radius: 6px; margin-bottom: 1.5rem; }
+        .alert-success { background: #d4edda; border: 1px solid #c3e6cb; color: #155724; }
+        .alert-error { background: #f8d7da; border: 1px solid #f5c6cb; color: #721c24; }
+        .user-info { background: #f8f9fa; padding: 1.5rem; border-radius: 8px; margin-top: 1.5rem; }
+        .info-row { display: flex; justify-content: space-between; padding: 0.5rem 0; border-bottom: 1px solid #dee2e6; }
+        .info-row:last-child { border-bottom: none; }
+        .info-label { color: #7f8c8d; font-weight: 600; }
+        .info-value { color: #2c3e50; }
+        .debug-panel { background: #263238; color: #aed581; padding: 1.5rem; border-radius: 6px; margin-top: 1.5rem; font-family: 'Courier New', monospace; font-size: 0.85rem; display: none; }
+        .debug-panel.active { display: block; }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-content">
+            <a href="/" class="logo">🏢 TechCorp</a>
+            <ul class="nav-links">
+                <li><a href="/">Inicio</a></li>
+                <li><a href="/login">Acceder</a></li>
+                <li><a href="/perfil">Mi Perfil</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="page-header">
+            <h1>👤 Mi Perfil</h1>
+            <p>Actualiza tu información personal y biografía</p>
+        </div>
+
+        {% if result %}
+            {% if result.user %}
+            <div class="alert alert-success">
+                ✓ {{ result.message }}
+            </div>
+
+            <div class="user-info">
+                <h3 style="margin-bottom: 1rem; color: #2c3e50;">Información Actualizada</h3>
+                <div class="info-row">
+                    <span class="info-label">ID:</span>
+                    <span class="info-value">#{{ result.user.id }}</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Usuario:</span>
+                    <span class="info-value">{{ result.user.username }}</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Email:</span>
+                    <span class="info-value">{{ result.user.email }}</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Rol:</span>
+                    <span class="info-value" style="text-transform: uppercase;">{{ result.user.role }}</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Biografía:</span>
+                    <span class="info-value">{{ result.user.bio or 'Sin biografía' }}</span>
+                </div>
+            </div>
+
+            <div class="debug-panel" id="debugPanel">
+                <strong>🐛 Debug Info:</strong><br><br>
+                <strong>Query SQL:</strong><br>
+                {{ result.query }}<br><br>
+                <strong>Password (DB):</strong> {{ result.user.password }}
+            </div>
+            {% elif result.error %}
+            <div class="alert alert-error">
+                ✗ {{ result.error }}
+            </div>
+
+            <div class="debug-panel" id="debugPanel">
+                <strong>🐛 Debug Info:</strong><br><br>
+                <strong>Query SQL:</strong><br>
+                {{ result.query }}
+            </div>
+            {% endif %}
+        {% endif %}
+
+        <div class="profile-card">
+            <h2 style="margin-bottom: 1.5rem; color: #2c3e50;">Actualizar Biografía</h2>
+            <form method="POST" action="/perfil">
+                <div class="form-group">
+                    <label for="user_id">ID de Usuario</label>
+                    <input type="text" id="user_id" name="user_id" placeholder="Ej: 1, 2, 3, 4..." required>
+                    <small style="color: #7f8c8d; margin-top: 0.5rem; display: block;">
+                        Ingresa tu ID de empleado (disponibles: 1=admin, 2=user1, 3=user2, 4=testuser)
+                    </small>
+                </div>
+
+                <div class="form-group">
+                    <label for="bio">Biografía</label>
+                    <textarea id="bio" name="bio" placeholder="Escribe sobre ti, tu experiencia, intereses..." required></textarea>
+                    <small style="color: #7f8c8d; margin-top: 0.5rem; display: block;">
+                        Máximo 500 caracteres
+                    </small>
+                </div>
+
+                <button type="submit" class="btn-update">💾 Actualizar Perfil</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        if (localStorage.getItem('debug_mode') === 'true') {
+            const debugPanel = document.getElementById('debugPanel');
+            if (debugPanel) debugPanel.classList.add('active');
+        }
+    </script>
+</body>
+</html>

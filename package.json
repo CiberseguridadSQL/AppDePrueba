@@ -1,0 +1,8 @@
+{
+  "name": "flask-vulnerable-app",
+  "private": true,
+  "description": "Vulnerable Flask application for educational purposes",
+  "scripts": {
+    "test": "echo \"This is a Python Flask project. Use 'python app.py' to run.\""
+  }
+}

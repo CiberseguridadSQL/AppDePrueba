@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Gestión Empresarial - TechCorp</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: #f5f7fa;
+            color: #2c3e50;
+        }
+
+        .navbar {
+            background: #2c3e50;
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .navbar-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #3498db;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: #ecf0f1;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .nav-links a:hover {
+            color: #3498db;
+        }
+
+        .hero {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 4rem 2rem;
+            text-align: center;
+        }
+
+        .hero h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: -3rem auto 2rem;
+            padding: 0 2rem;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .dashboard-card {
+            background: white;
+            border-radius: 8px;
+            padding: 2rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+            text-decoration: none;
+            color: inherit;
+            display: block;
+        }
+
+        .dashboard-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        .card-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .card-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: #2c3e50;
+        }
+
+        .card-description {
+            color: #7f8c8d;
+            line-height: 1.6;
+        }
+
+        .stats-section {
+            background: white;
+            border-radius: 8px;
+            padding: 2rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            margin-top: 1.5rem;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #3498db;
+        }
+
+        .stat-label {
+            color: #7f8c8d;
+            margin-top: 0.5rem;
+        }
+
+        .footer {
+            background: #2c3e50;
+            color: #ecf0f1;
+            text-align: center;
+            padding: 2rem;
+            margin-top: 3rem;
+        }
+
+        .debug-toggle {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #e74c3c;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: bold;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            font-size: 0.9rem;
+        }
+
+        .debug-toggle:hover {
+            background: #c0392b;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-content">
+            <div class="logo">🏢 TechCorp</div>
+            <ul class="nav-links">
+                <li><a href="/">Inicio</a></li>
+                <li><a href="/login">Acceder</a></li>
+                <li><a href="/registro">Registrarse</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="hero">
+        <h1>Sistema de Gestión Empresarial</h1>
+        <p>Plataforma integral para la gestión de empleados, proyectos y recursos</p>
+    </div>
+
+    <div class="container">
+        <div class="stats-section">
+            <h2 style="margin-bottom: 1rem;">Estadísticas del Sistema</h2>
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <div class="stat-value">247</div>
+                    <div class="stat-label">Empleados Activos</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">42</div>
+                    <div class="stat-label">Departamentos</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">156</div>
+                    <div class="stat-label">Proyectos</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">98%</div>
+                    <div class="stat-label">Satisfacción</div>
+                </div>
+            </div>
+        </div>
+
+        <h2 style="margin-bottom: 1.5rem; color: #2c3e50;">Módulos del Sistema</h2>
+
+        <div class="dashboard-grid">
+            <a href="/login" class="dashboard-card">
+                <div class="card-icon">🔐</div>
+                <div class="card-title">Inicio de Sesión</div>
+                <div class="card-description">
+                    Accede a tu cuenta de empleado para ver tu información personal y proyectos asignados.
+                </div>
+            </a>
+
+            <a href="/buscar_empleado" class="dashboard-card">
+                <div class="card-icon">🔍</div>
+                <div class="card-title">Directorio de Empleados</div>
+                <div class="card-description">
+                    Busca empleados por ID o nombre. Consulta información de contacto y departamento.
+                </div>
+            </a>
+
+            <a href="/perfil" class="dashboard-card">
+                <div class="card-icon">👤</div>
+                <div class="card-title">Mi Perfil</div>
+                <div class="card-description">
+                    Actualiza tu información personal, biografía y preferencias del sistema.
+                </div>
+            </a>
+
+            <a href="/productos" class="dashboard-card">
+                <div class="card-icon">📦</div>
+                <div class="card-title">Catálogo de Productos</div>
+                <div class="card-description">
+                    Explora el catálogo de productos y servicios disponibles por categoría.
+                </div>
+            </a>
+
+            <a href="/registro" class="dashboard-card">
+                <div class="card-icon">📝</div>
+                <div class="card-title">Nuevo Empleado</div>
+                <div class="card-description">
+                    Registra un nuevo empleado en el sistema con su información básica.
+                </div>
+            </a>
+
+            <a href="/reportes" class="dashboard-card">
+                <div class="card-icon">📊</div>
+                <div class="card-title">Reportes</div>
+                <div class="card-description">
+                    Genera reportes de desempeño, asistencia y productividad del personal.
+                </div>
+            </a>
+        </div>
+    </div>
+
+    <div class="footer">
+        <p>&copy; 2024 TechCorp - Sistema de Gestión Empresarial v2.4.1</p>
+        <p style="margin-top: 0.5rem; font-size: 0.9rem; opacity: 0.8;">
+            Todos los derechos reservados | <a href="#" style="color: #3498db;">Soporte Técnico</a>
+        </p>
+    </div>
+
+    <button class="debug-toggle" onclick="toggleDebugMode()">
+        🐛 Modo Debug
+    </button>
+
+    <script>
+        function toggleDebugMode() {
+            const isDebug = localStorage.getItem('debug_mode') === 'true';
+            localStorage.setItem('debug_mode', !isDebug);
+            alert(isDebug ? 'Modo Debug Desactivado' : 'Modo Debug Activado\n\nAhora verás las queries SQL ejecutadas.');
+            location.reload();
+        }
+
+        // Mostrar estado actual
+        if (localStorage.getItem('debug_mode') === 'true') {
+            document.querySelector('.debug-toggle').style.background = '#27ae60';
+            document.querySelector('.debug-toggle').textContent = '✅ Debug ON';
+        }
+    </script>
+</body>
+</html>
