@@ -4,7 +4,6 @@ from flask import Flask, request, jsonify, render_template
 app = Flask(__name__)
 DATABASE = 'vulnerable.db'
 
-
 def get_db():
     conn = sqlite3.connect(DATABASE)
     conn.row_factory = sqlite3.Row
@@ -45,6 +44,36 @@ def buscar_empleado():
             # Búsqueda por nombre - vulnerable a Error-based injection
             query = f"SELECT id, username, email, role FROM users WHERE username LIKE '%{query_param}%'"
 
+        try:
+            cursor.execute(query)
+            results = cursor.fetchall()
+            conn.close()
+
+            users = []
+            for row in results:
+                users.append(dict(row))
+
+            result = {
+                'query': query,
+                'users': users,
+                'search_type': search_type
+            }
+        except Exception as e:
+            result = {
+                'error': str(e),
+                'query': query,
+                'users': [],
+                'search_type': search_type
+            }
+    else:
+        search_type = request.args.get('search_type', 'id') 
+        query_param = request.args.get('query', '')
+        conn = get_db()
+        cursor = conn.cursor()
+        if search_type=="id":
+            query = f"SELECT id, username, email, role FROM users WHERE id = {query_param}"
+        else:
+            query = f"SELECT id, username, email, role FROM users WHERE username LIKE '%{query_param}%'"
         try:
             cursor.execute(query)
             results = cursor.fetchall()

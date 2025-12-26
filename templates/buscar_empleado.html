@@ -311,28 +311,22 @@
             </div>
 
             <div id="tab-id" class="tab-content active">
-                <form method="POST" action="/buscar_empleado">
+                <form method="GET" action="/buscar_empleado">
                     <input type="hidden" name="search_type" value="id">
                     <div class="form-group">
                         <label for="employee_id">ID del Empleado</label>
                         <input type="text" id="employee_id" name="query" placeholder="Ej: 1, 2, 3..." required>
-                        <small style="color: #7f8c8d; margin-top: 0.5rem; display: block;">
-                            Ingresa el número de identificación del empleado
-                        </small>
                     </div>
                     <button type="submit" class="btn-search">🔍 Buscar</button>
                 </form>
             </div>
 
             <div id="tab-name" class="tab-content">
-                <form method="POST" action="/buscar_empleado">
+                <form method="GET" action="/buscar_empleado">
                     <input type="hidden" name="search_type" value="name">
                     <div class="form-group">
                         <label for="employee_name">Nombre del Empleado</label>
                         <input type="text" id="employee_name" name="query" placeholder="Ej: admin, user1..." required>
-                        <small style="color: #7f8c8d; margin-top: 0.5rem; display: block;">
-                            Ingresa el nombre de usuario o nombre completo
-                        </small>
                     </div>
                     <button type="submit" class="btn-search">🔍 Buscar</button>
                 </form>
