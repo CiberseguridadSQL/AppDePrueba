@@ -1,13 +1,67 @@
 import sqlite3
-from flask import Flask, request, jsonify, render_template
+import logging
+import datetime
+from flask import Flask, request, jsonify, render_template, has_request_context
 
 app = Flask(__name__)
 DATABASE = 'vulnerable.db'
+
+# --- CONFIGURACIÓN BLUE TEAM ---
+class ContextFilter(logging.Filter):
+    def filter(self, record):
+        if has_request_context():
+            record.clientip = request.remote_addr
+        else:
+            record.clientip = 'SYSTEM'
+        return True
+
+# Configurar logging
+file_handler = logging.FileHandler('security.log')
+file_handler.setLevel(logging.INFO)
+file_handler.addFilter(ContextFilter())
+file_handler.setFormatter(logging.Formatter('%(asctime)s - [%(levelname)s] - IP: %(clientip)s - %(message)s'))
+
+# Agregar handler al logger raiz
+logging.getLogger().addHandler(file_handler)
+logging.getLogger().setLevel(logging.INFO)
+
+logger = logging.getLogger()
+# -------------------------------
 
 def get_db():
     conn = sqlite3.connect(DATABASE)
     conn.row_factory = sqlite3.Row
     return conn
+
+
+# --- IDS / DETECCIÓN DE ATAQUES ---
+@app.before_request
+def detect_attacks():
+    # Firmas de ataques comunes (SQL Injection)
+    attack_patterns = [
+        "UNION SELECT", "UNION ALL SELECT", 
+        "' OR '1'='1", "' OR 1=1", 
+        "--", "/*", "Waitfor delay", 
+        "admin' --", "DROP TABLE",
+        " SELECT ", "CAST(", "CASE WHEN",
+        "sqlite_master", " OR ", "SUBSTR(",
+        "LENGTH(", "BENCHMARK(", "SLEEP("
+    ]
+    
+    # Revisar argumentos de URL y datos de formularios
+    data_to_check = list(request.args.values()) + list(request.form.values())
+    
+    for value in data_to_check:
+        value_str = str(value).upper() # Convertir a mayúsculas para comparar
+        
+        for pattern in attack_patterns:
+            if pattern.upper() in value_str:
+                # ¡ALERTA DETECTADA!
+                log_msg = f"ALERTA DE SEGURIDAD: Posible ataque SQL Injection detectado. Patron: '{pattern}' en Payload: '{value}'"
+                logger.warning(log_msg)
+                # Opcional: Podrías bloquear la petición aquí con "abort(403)"
+                # Opcional: Podrías bloquear la petición aquí con "abort(403)"
+# ----------------------------------
 
 
 @app.route('/')
@@ -116,6 +170,9 @@ def login():
         username = request.form.get('username', '')
         password = request.form.get('password', '')
 
+        # LOG DEL INTENTO
+        logger.info(f"Intento de inicio de sesión para usuario: {username}")
+
         conn = get_db()
         cursor = conn.cursor()
 
@@ -127,6 +184,8 @@ def login():
             conn.close()
 
             if user:
+                # LOG DE ÉXITO
+                logger.info(f"✅ Login EXITOSO para usuario: {username}")
                 result = {
                     'vulnerability': 'Boolean-based Blind SQL Injection',
                     'query': query,
@@ -134,6 +193,8 @@ def login():
                     'user': dict(user)
                 }
             else:
+                # LOG DE FALLO
+                logger.warning(f"❌ Login FALLIDO para usuario: {username} - Credenciales inválidas")
                 result = {
                     'vulnerability': 'Boolean-based Blind SQL Injection',
                     'query': query,
@@ -141,6 +202,8 @@ def login():
                     'message': 'Credenciales invalidas'
                 }
         except Exception as e:
+            # LOG DE ERROR (Indicio de Error-based SQLi)
+            logger.error(f"🔥 ERROR DE BASE DE DATOS (Posible ataque): {str(e)}")
             result = {
                 'error': str(e),
                 'query': query,

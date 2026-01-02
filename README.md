@@ -288,6 +288,32 @@ if sort not in allowed_sorts:
 - user1:pass123 (role: user)
 - user2:mypassword (role: user)
 
+## 🛡️ Implementación de auditorías mediante logs
+
+Como parte de las tareas de aseguramiento, se han implementado los siguientes controles en `app.py`:
+
+### 1. Sistema de Logging y Auditoría
+- Se ha configurado un **logger centralizado** que escribe en `security.log`.
+- Implementación de un `ContextFilter` para capturar y registrar la **Dirección IP** real del cliente en cada evento.
+- Registro detallado de eventos de autenticación (intentos fallidos y exitosos) en la ruta `/login`.
+
+### 2. IDS (Intrusion Detection System)
+Se ha desarrollado un mecanismo de detección activo (`detect_attacks`) que se ejecuta antes de cada petición (`@app.before_request`):
+- **Análisis de Payloads**: Inspecciona argumentos de URL, datos de formularios y cookies.
+- **Firmas de Ataque**: Detecta patrones de SQL Injection como:
+  - Palabras clave: `UNION`, `SELECT`, `DROP`, `UPDATE`, `DELETE`.
+  - Funciones peligrosas: `CAST(`, `CHAR(`, `SLEEP`, `BENCHMARK`.
+  - Estructuras de control: `CASE WHEN`, `OR ...=`.
+  - Metadatos de DB: `sqlite_master`, `information_schema`.
+- **Respuesta**: Bloquea peticiones maliciosas retornando un error **403 Forbidden** y genera una alerta de nivel **CRITICAL**.
+
+### 3. Evidencia Forense
+El sistema genera automáticamente un archivo `security.log` que cumple con los requisitos de recolección de evidencia, registrando:
+- Fecha y Hora (Timestamp).
+- IP de origen.
+- Nivel de severidad (INFO, WARNING, CRITICAL).
+- Descripción del evento o payload detectado.
+
 ## Licencia
 
 Este proyecto es solo para fines educativos. Usar responsablemente.
